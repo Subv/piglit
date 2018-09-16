@@ -11,7 +11,9 @@ set_source_files_properties(
 	PROPERTIES GENERATED 1
 	)
 
-link_libraries(${CMAKE_DL_LIBS})
+if(PIGLIT_DYNAMIC_LINKING)
+	link_libraries(${CMAKE_DL_LIBS})
+endif()
 
 if(HAVE_LIBCACA)
     link_libraries(caca)
@@ -103,6 +105,11 @@ if(PIGLIT_USE_WAFFLE)
 	if(PIGLIT_HAS_X11)
 		list(APPEND UTIL_GL_SOURCES
 			piglit-framework-gl/piglit_x11_framework.c
+		)
+	endif()
+	if(SWITCH_LIBNX)
+		list(APPEND UTIL_GL_SOURCES
+			piglit-framework-gl/piglit_switch_egl_framework.c
 		)
 	endif()
 

@@ -63,6 +63,14 @@ function(piglit_add_executable name)
     list(REMOVE_AT ARGV 0)
     add_executable(${name} ${ARGV})
     add_dependencies(${name} piglit_dispatch_gen)
+    if(SWITCH_LIBNX)
+        # Add the wrapper code to perform any libnx initialization tasks.
+        target_sources(${name} PUBLIC ${PROJECT_SOURCE_DIR}/src/piglit/libnx_wrap.c)
+        # Use the C++ linker to link the executables as mesa requires libstdc++
+        set_target_properties(${name} PROPERTIES LINKER_LANGUAGE CXX)
+        # Link against the required GL libraries.
+        target_link_libraries(${name} EGL GLESv2 glapi drm_nouveau nx)
+    endif()
 
     install(TARGETS ${name} DESTINATION ${PIGLIT_INSTALL_LIBDIR}/bin)
 

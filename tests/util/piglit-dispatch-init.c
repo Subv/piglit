@@ -31,6 +31,10 @@
 #include <AvailabilityMacros.h>
 #include <dlfcn.h>
 
+#elif defined(__SWITCH__)
+
+#include <EGL/egl.h>
+
 #else /* Linux */
 
 #include <dlfcn.h>
@@ -79,7 +83,7 @@ default_get_proc_address_failure(const char *function_name)
 	piglit_report_result(PIGLIT_FAIL);
 }
 
-#if defined(__APPLE__) || defined(PIGLIT_HAS_EGL)
+#if defined(__APPLE__) || (defined(PIGLIT_HAS_EGL) && !defined(__SWITCH__))
 static void *
 do_dlsym(void **handle, const char *lib_name, const char *function_name)
 {
@@ -166,6 +170,28 @@ get_core_proc_address(const char *function_name, int gl_10x_version)
 	 */
 	(void) gl_10x_version;
 
+	return get_ext_proc_address(function_name);
+}
+
+#elif defined(__SWITCH__)
+
+/**
+ * This function is used to retrieve the address of all GL functions
+ * on Nintendo Switch with libnx.
+ */
+static piglit_dispatch_function_ptr
+get_ext_proc_address(const char *function_name)
+{
+	return (piglit_dispatch_function_ptr)eglGetProcAddress(function_name);
+}
+
+/**
+ * This function is used to retrieve the address of core GL functions
+ * on Nintendo Switch with libnx.
+ */
+static piglit_dispatch_function_ptr
+get_core_proc_address(const char *function_name, int gl_10x_version)
+{
 	return get_ext_proc_address(function_name);
 }
 

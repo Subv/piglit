@@ -121,6 +121,16 @@ piglit_wfl_framework_choose_platform(const struct piglit_gl_test_config *test_co
 #endif
 	}
 
+	else if (strcmp(env, "switch_egl") == 0) {
+#ifdef __SWITCH__
+		return WAFFLE_PLATFORM_SWITCH_LIBNX_EGL;
+#else
+		fprintf(stderr, "environment var PIGLIT_PLATFORM=switch_egl, "
+		        "but piglit was not built for the Switch\n");
+		piglit_report_result(PIGLIT_FAIL);
+#endif
+	}
+	
 	else {
 		fprintf(stderr, "environment var PIGLIT_PLATFORM has bad "
 			"value \"%s\"\n", env);

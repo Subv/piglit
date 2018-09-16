@@ -158,7 +158,12 @@ main(void)
 		}
 
 
-		int fd = open(devstring, O_RDWR | O_CLOEXEC);
+		int fd = open(devstring, O_RDWR 
+#ifndef __SWITCH__
+			// Do not attempt to use this flag on Switch.
+			| O_CLOEXEC
+#endif
+		);
 		if (fd < 0) {
 			printf("Failed to open drm device file %s: %s\n",
 				devstring, strerror(errno));

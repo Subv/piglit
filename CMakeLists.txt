@@ -48,9 +48,10 @@ option(PIGLIT_BUILD_GLES1_TESTS "Build tests for OpenGL ES1" ${PIGLIT_BUILD_GLES
 option(PIGLIT_BUILD_GLES2_TESTS "Build tests for OpenGL ES2" ${PIGLIT_BUILD_GLES_TESTS_DEFAULT})
 option(PIGLIT_BUILD_GLES3_TESTS "Build tests for OpenGL ES3" ${PIGLIT_BUILD_GLES_TESTS_DEFAULT})
 option(PIGLIT_BUILD_CL_TESTS "Build tests for OpenCL" OFF)
+option(PIGLIT_DYNAMIC_LINKING "Use dynamic linking (Turn this off for platforms without dynamic linking)" ON)
 
 if(PIGLIT_BUILD_GL_TESTS)
-	find_package(OpenGL REQUIRED)
+	find_package(OpenGL REQUIRED CONFIG)
 endif()
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
@@ -430,8 +431,11 @@ if(HAVE_LIBCACA)
 endif(HAVE_LIBCACA)
 endif(GBM_FOUND)
 
-if(PIGLIT_USE_WAFFLE AND ${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-	pkg_check_modules(EGL egl>=11.0)
+if(PIGLIT_USE_WAFFLE)
+	if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux" OR SWITCH_LIBNX)
+		message(WARNING "Finding EGL")
+		pkg_check_modules(EGL egl>=11.0)
+	endif()
 endif()
 
 if(EGL_FOUND)

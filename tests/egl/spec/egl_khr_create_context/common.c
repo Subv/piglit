@@ -25,7 +25,6 @@
 #include "piglit-util-egl.h"
 #include "common.h"
 
-static Display *dpy = NULL;
 EGLDisplay egl_dpy;
 EGLint egl_major;
 EGLint egl_minor;
@@ -80,7 +79,7 @@ bool
 EGL_KHR_create_context_setup(EGLint renderable_type_mask)
 {
 	EGLint config_attribs[] = {
-		EGL_SURFACE_TYPE, EGL_WINDOW_BIT | EGL_PIXMAP_BIT | EGL_PBUFFER_BIT,
+		EGL_SURFACE_TYPE, EGL_WINDOW_BIT/* | EGL_PIXMAP_BIT | EGL_PBUFFER_BIT*/,
 		EGL_RED_SIZE, 1,
 		EGL_GREEN_SIZE, 1,
 		EGL_BLUE_SIZE, 1,
@@ -90,13 +89,7 @@ EGL_KHR_create_context_setup(EGLint renderable_type_mask)
 	};
 	EGLint count;
 
-	dpy = XOpenDisplay(NULL);
-	if (dpy == NULL) {
-		fprintf(stderr, "couldn't open display\n");
-		piglit_report_result(PIGLIT_SKIP);
-	}
-
-	egl_dpy = eglGetDisplay(dpy);
+	egl_dpy = eglGetDisplay(EGL_DEFAULT_DISPLAY);
 	if (egl_dpy == EGL_NO_DISPLAY) {
 		fprintf(stderr, "eglGetDisplay() failed\n");
 		piglit_report_result(PIGLIT_FAIL);
